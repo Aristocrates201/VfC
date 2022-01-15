@@ -364,16 +364,17 @@ p.description {
 	font-size:0.7em;
 	
 }
-div.contact {
-	float:right;
+#contact {
+	float:left;
 	margin:16px 14px 14px 14px;
 	color:#FFFFFF;
 	font-size:1.4em;
 }
-.contact a, .contact a:visited
+#contact a, #contact a:visited
 {
-	color:#055cf7;
-	font-size:0.7em;
+	color:#FFFFFF;
+	font-size:1.4em;
+	margin: 10px 10px 10px 10px;
 }
 div.credits {
 	float:left;

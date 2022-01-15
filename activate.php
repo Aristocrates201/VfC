@@ -15,13 +15,10 @@ if($fail)
         echo('<br />');
         echo('<br />');
         echo('Alternatively you may have miscopied the web address from the email we sent you please check and try again.');
-    }
-    else
-    {
+    }else{
         $uname=getraw('user','uname',$uid,$null);
         echo("You are logged in as $uname.");
     }
-
 }
 else
 {
@@ -32,7 +29,7 @@ else
 	setraw('user','activated',$userid,$yes,$null);
     $uname=getraw('user','uname',$userid,$null);
     getres("DELETE FROM toactivate WHERE token='$token'");
-    login($uname,$password);
+    loginAfterActivate($uname,$password);
     starthtmlpage("Register - Activation");
     echo('<h2>Register</h2>');
     ?>

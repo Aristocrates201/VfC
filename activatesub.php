@@ -14,7 +14,7 @@ if($fail)
 else
 {
     getres("UPDATE user SET  activated='yes' WHERE id='$userid'");
-	getres("DELETE FROM $database.substoactivate WHERE substoactivate.sid='$userid'");
+	getres("DELETE FROM visionsf_visions.substoactivate WHERE substoactivate.sid='$userid'");
 	
 
     starthtmlpage("Activate");

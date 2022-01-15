@@ -1,8 +1,6 @@
 <?php
-
-
 // The functions here are to do with the appearance of forms. Functions associated with the submission of forms are found in submit.php.
-
+error_reporting(E_ERROR | E_PARSE);
 function startform() {
 	$fwd="'$_GET[fwd]'";
     echo('<form method="post" action="submit.php" accept-charset="utf-8" onsubmit="ajaxsendform(this,'.$fwd.');return false;">');

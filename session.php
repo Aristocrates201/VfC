@@ -56,14 +56,19 @@ function login($uname,$password)
     global $uid;
     global $sessionerror;
 	global $gotopage;
+
 	
     //if they have a sid cookie end that session
-    if($_COOKIE['sid'])
+    if(isset($_COOKIE['sid']))
     {
         getres("DELETE FROM session WHERE sid='".mysql_real_escape_string($_COOKIE['sid'])."'");
         setcookie('sid','',0,'/');
     }
-    $uid=getraw('user','id',"blocked='no' And uname='".mysql_real_escape_string(stripslashes($uname))."' And password='".mysql_real_escape_string(stripslashes($password))."'",$fail);
+	$password_new = mysql_real_escape_string(stripslashes(sha1($password.'0a30e26e83b2ac5b9e29e1b161e5c1fa742')));
+	$uname_new = mysql_real_escape_string(stripslashes($uname));
+	
+    $uid = getraw('user', 'id', "blocked='no' And uname='".$uname_new."' And password='".$password_new."'", $fail);
+		
     if(!$fail)
     {
         $sid='';
@@ -72,7 +77,9 @@ function login($uname,$password)
             $sid.=chr(mt_rand(65,90));
         }
         $tnow=time();
-        $expires=$tnow+3600;//1 hour session.
+        $expires=$tnow+3600;//1 hour session.	
+		
+	
         getres("INSERT INTO session (sid,expires,uid) VALUES ('$sid','$expires','$uid')");
         setcookie  ( 'sid', $sid, 0,'/');
 		$gotopage=$_GET['fwd'];
@@ -83,6 +90,52 @@ function login($uname,$password)
     else
     {
         $blocked=getraw('user','blocked',"uname='".mysql_real_escape_string(stripslashes($uname))."' And password='".mysql_real_escape_string(stripslashes($password))."'",$fail);
+        if('yes'===$blocked)
+            $sessionerror="Account blocked.";
+        else
+            $sessionerror='Invalid username password combination.';
+    }
+}
+
+function loginAfterActivate($uname,$password)
+{
+    global $uid;
+    global $sessionerror;
+	global $gotopage;
+
+	
+    //if they have a sid cookie end that session
+    if(isset($_COOKIE['sid']))
+    {
+        getres("DELETE FROM session WHERE sid='".mysql_real_escape_string($_COOKIE['sid'])."'");
+        setcookie('sid','',0,'/');
+    }
+	$password_new = $password;
+	$uname_new = mysql_real_escape_string(stripslashes($uname));
+	
+    $uid = getraw('user', 'id', "blocked='no' And uname='".$uname_new."' And password='".mysql_real_escape_string($password_new)."'", $fail);
+		
+    if(!$fail)
+    {
+        $sid='';
+        for($n=0;$n<20;$n++)
+        {
+            $sid.=chr(mt_rand(65,90));
+        }
+        $tnow=time();
+        $expires=$tnow+3600;//1 hour session.	
+		
+	
+        getres("INSERT INTO session (sid,expires,uid) VALUES ('$sid','$expires','$uid')");
+        setcookie  ( 'sid', $sid, 0,'/');
+		$gotopage = 'user_options.php';
+		
+        //do some housekeeping
+        getres("DELETE FROM session WHERE expires < $tnow");
+    }
+    else
+    {
+        $blocked=getraw('user','blocked',"uname='".mysql_real_escape_string(stripslashes($uname))."' And password='".mysql_real_escape_string($password)."'",$fail);
         if('yes'===$blocked)
             $sessionerror="Account blocked.";
         else
